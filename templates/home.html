@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link type="text/css" href="static/styles/home.css" rel="stylesheet" />
+
+<div id="app" class="container mx-3 my-3 " style="height: 95%;background: antiquewhite;box-sizing: border-box;">
+    <input type="file" @change="getFile($event)" class="d-block my-3"
+    />
+    <hr/>
+    <button type="button" class="btn btn-warning mx-3" @click="uploadFile">
+        upload zip file
+    </button>
+    <button type="button" class="btn btn-success mx-3" @click="checkUpload">
+        check upload processing
+    </button>
+</div>
+
+<script src="static/js/services/api.services.js" type="text/javascript"></script>
+<script src="static/js/pages/home.js" type="text/javascript"></script>
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
+
+{% endblock %}
