@@ -2,7 +2,6 @@
 Main flask server
 """
 import os
-import shutil
 from zipfile import ZipFile
 import zipfile
 from flask import Flask, render_template, request

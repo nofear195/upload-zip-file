@@ -28,13 +28,15 @@ Download the python package using the **requirements.txt** file
 
     pip install -r requirements.txt
 
-Select Interpreter from virtual environments
-
-    venv/bin/python3
-
 Exit virtual environments
 
     deactivate
+
+add below code on vscode setting.json **can also define in devcontainer.json**
+    
+    "python.defaultInterpreterPath": "/usr/local/venv/bin/python"
+
+	"python.linting.pylintPath": "/usr/local/venv/bin/pylint"
 
 ### reference link & TBD
 
