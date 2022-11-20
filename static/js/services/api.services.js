@@ -4,7 +4,6 @@ async function chunkDataStore(chunkData,chunkIndex) {
     formData.append("chunkData", chunkData)
     formData.append("chunkIndex",chunkIndex)
 
-    console.log('formdat',chunkData.size)
     const response = await axios({
         method: "post",
         url: '/chunk-data-store',
@@ -34,4 +33,5 @@ async function dealWithUpload() {
     if (!resData) return
 
     console.log('response',resData)
+    return resData.data.processing
 }

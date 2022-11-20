@@ -29,10 +29,14 @@ const app = Vue.createApp({
             const chunkSize = 1024 * 10 * 10
             const chunks = await this.sliceFile(this.files, chunkSize)
 
+            
             for (let i = 0; i < chunks.length; i++) {
                 await chunkDataStore(chunks[i], i)
             }
-            const interval = setInterval(async () => { await dealWithUpload() }, 5000)
+            const interval = setInterval(async () => {
+                const result = await dealWithUpload()
+                if (result) clearInterval(interval)
+            }, 5000)
 
         },
         checkUpload: async function () {

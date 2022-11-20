@@ -32,7 +32,7 @@ Exit virtual environments
 
     deactivate
 
-add below code on vscode setting.json **can also define in devcontainer.json**
+add below code on vscode setting.json which can also define in **devcontainer.json**
     
     "python.defaultInterpreterPath": "/usr/local/venv/bin/python"
 
