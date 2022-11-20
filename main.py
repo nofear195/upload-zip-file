@@ -1,13 +1,12 @@
 """
 Main flask server
 """
-import os
-from flask import Flask, render_template, request
+from flask import render_template, request
 from flask_cors import CORS
 # from waitress import serve
-from services.base import response,CustomFlask,variable_init
+from services.base import response, CustomFlask, variable_init
 import services.base
-from services.upload import process_upload
+from services.upload import process_upload, save_chunk_data
 
 
 app = CustomFlask(__name__)
@@ -16,6 +15,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 CORS(app)
 
 variable_init()
+storage_folder = './upload'
 
 
 @app.route('/')
@@ -32,17 +32,10 @@ def store_chunk_data():
 
     services.base.PROCESSING = False
 
-    try:
-        os.makedirs('./upload/test')
-    except FileExistsError:
-        print('file exit')
+    result = save_chunk_data(storage_folder, chunk_index, chunk_data)
+    if result is False:
+        return response(1, 'fail')
 
-    try:
-        save_path = f'./upload/test/{chunk_index}.upload'
-        with open(save_path, 'ab') as file:
-            file.write(chunk_data.read())
-    except OSError as error:
-        print('error save', error)
     return response(0, 'success')
 
 
@@ -51,10 +44,10 @@ def deal_with_upload():
     """ deal with upload"""
 
     if services.base.PROCESSING is False:
-        process_upload()
-        return response(0, 'success',{'processing':False})
+        process_upload(storage_folder)
+        return response(0, 'success', {'processing': False})
 
-    return response(0, 'success',{'processing':True})
+    return response(0, 'success', {'processing': True})
 
 
 def main():

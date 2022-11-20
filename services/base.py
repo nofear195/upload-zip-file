@@ -1,3 +1,6 @@
+"""
+basic setting
+"""
 from flask import Flask
 
 def response(code, message, data=None):
@@ -16,6 +19,10 @@ class CustomFlask(Flask):
         variable_end_string='%%',
     ))
 
+PROCESSING = False
+
 def variable_init():
+    """ init variable"""
     global PROCESSING
     PROCESSING = False
+    

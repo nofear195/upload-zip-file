@@ -1,4 +1,4 @@
-# upload file with chunk
+# upload zip file
 
 Base projcet environment
 
@@ -14,7 +14,7 @@ Base projcet environment
     python : 3.9.2
     node : v16.18.0
 
-### Flask server settings
+### Flask server settings (with virtual environment)
 
 Create a python virtual environments (venv) 
 
@@ -37,6 +37,12 @@ add below code on vscode setting.json which can also define in **devcontainer.js
     "python.defaultInterpreterPath": "/usr/local/venv/bin/python"
 
 	"python.linting.pylintPath": "/usr/local/venv/bin/pylint"
+
+### Flask server settings (without virtual environment)
+
+Download the python package using the **requirements.txt** file
+
+    pip install -r requirements.txt
 
 ### reference link & TBD
 
