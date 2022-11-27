@@ -1,20 +1,71 @@
 """
-upload
+upload function
 """
 
 import os
 from zipfile import ZipFile
 import zipfile
-import services.base # pylint: disable=import-error
+from shutil import rmtree
+from uuid import uuid4, UUID
+import services.base  # pylint: disable=import-error
 
 
-chunk_save_folder_name = 'chunk_temp'
-temp_zip_file_name = 'collation.zip'
+def is_valid_uuid_str(value):
+    """ check input string is valid uuid"""
+    try:
+        UUID(value)
+        return True
+    except ValueError:
+        return False
 
-def save_chunk_data(storage_folder_path, chunk_index, chunk_data):
+
+# def transfer_encode_error(file):
+#     """ deal with encode error"""
+
+#     if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+#         # print("file",file)
+#         #  中文亂碼編碼 、過濾特殊字元
+#         right_name = file.encode('cp437').decode(
+#             'big5', 'ignore').replace("'", "")
+#         split_name = file.split('/')
+#         return f'{split_name[0]}/{right_name}.eee'
+#     return file
+
+
+def save_chunk_data(storage_folder_path, zip_file_name, chunk_index, chunk_data):
     """ save chunk data to storage folder"""
 
-    chunk_save_folder_path = f'{storage_folder_path}/{chunk_save_folder_name}'
+    # check if zip file exist and delete it
+    zip_file_path = f'{storage_folder_path}/{zip_file_name}.zip'
+    if os.path.exists(zip_file_path):
+        print('upload zip exist')
+        os.remove(zip_file_path)
+
+    if services.base.UPLOAD_UUID == '':
+        services.base.UPLOAD_UUID = str(uuid4())
+
+    temp_folder_name = f'{zip_file_name}_{services.base.UPLOAD_UUID}'
+
+    # delete all fail upload folder
+    folder_name_list = os.listdir(storage_folder_path)
+    for folder_name in folder_name_list:
+        split_folder_name = folder_name.split("_")
+        vaild_str_input = str(uuid4()) if len(
+            split_folder_name) == 1 else split_folder_name[1]
+        if folder_name != temp_folder_name and is_valid_uuid_str(vaild_str_input):
+            try:
+                rmtree(f'{storage_folder_path}/{folder_name}')
+            except OSError as error:
+                print('os error ', error)
+
+    chunk_save_folder_path = f'{storage_folder_path}/{temp_folder_name}'
+
+    # delete all fail upload folder
+    folder_list = os.listdir(storage_folder_path)
+    for folder in folder_list:
+        if folder.find(services.base.UPLOAD_UUID) == -1:
+            rmtree(f'{storage_folder_path}/{folder}')
+
     try:
         os.makedirs(chunk_save_folder_path)
     except FileExistsError as error:
@@ -26,13 +77,13 @@ def save_chunk_data(storage_folder_path, chunk_index, chunk_data):
             file.write(chunk_data.read())
     except OSError as error:
         print('os error', error)
-        return False
-    return True
+        return [False, error]
+    return [True, 'save chunk success']
 
 
 def rebuild_file(chunks_src_path, storage_folder_path, target_file_name):
     """ rebuild_file"""
-    target_file_path = f'{storage_folder_path}/{target_file_name}'
+    target_file_path = f'{storage_folder_path}/{target_file_name}.zip'
 
     try:
         target_file = open(target_file_path, 'wb')
@@ -54,30 +105,55 @@ def rebuild_file(chunks_src_path, storage_folder_path, target_file_name):
     return [True, 'rebuild file success']
 
 
-def unzip_file(src_file_path, target_path):
+def unzip_file(src_file_path, storage_folder_path):
     """ unzip_file"""
+
+    temp_save_folder = f'{storage_folder_path}/unzip_{services.base.UPLOAD_UUID}'
+    try:
+        os.makedirs(temp_save_folder)
+    except FileExistsError as error:
+        print('storage folder exists', error)
+
     with ZipFile(src_file_path, 'r') as z_f:
         try:
             for item in z_f.namelist():
-                z_f.extract(item, path=target_path)
+                z_f.extract(item, path=storage_folder_path)
         except zipfile.BadZipfile as error:
             print('error', error)
             return [False, error]
+
+    # transfer_encode_error(temp_save_folder)
+    # unzip_folder_name = next(os.walk(temp_save_folder))[1][0]
+    
+    # os.remove(f'{temp_save_folder}/{unzip_folder_name}')
+
+    # for file in os.listdir(temp_save_folder):
+    #     os.remove(f'{temp_save_folder}/{file}')
+
+    # os.remove(temp_save_folder)
+
     return [True, 'unzip success']
 
 
-def process_upload(storage_folder_path):
+def process_upload(storage_folder_path, zip_file_name):
     """ process upload"""
 
     # merge all chunk data
-    rebuild_src_file_path = f'{storage_folder_path}/{chunk_save_folder_name}/'
+    rebuild_src_file_path = f'{storage_folder_path}/{zip_file_name}_{services.base.UPLOAD_UUID}/'
     result = rebuild_file(rebuild_src_file_path,
-                          storage_folder_path, temp_zip_file_name)
+                          storage_folder_path, zip_file_name)
     print('result', result[1])
 
     # unzip file
-    unzip_file_path = f'{storage_folder_path}/{temp_zip_file_name}'
+    unzip_file_path = f'{storage_folder_path}/{zip_file_name}.zip'
     result = unzip_file(unzip_file_path, storage_folder_path)
     print('result', result[1])
 
+    # delete tmp_folder
+    rmtree(rebuild_src_file_path)
+    # delete zip file
+    os.remove(unzip_file_path)
+
+    # reset variable to init
+    services.base.UPLOAD_UUID = ''
     services.base.PROCESSING = True

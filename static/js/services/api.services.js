@@ -1,6 +1,7 @@
 
-async function chunkDataStore(chunkData,chunkIndex) {
+async function chunkDataStore(zipFileName,chunkData,chunkIndex) {
     const formData = new FormData()
+    formData.append("zipFileName",zipFileName)
     formData.append("chunkData", chunkData)
     formData.append("chunkIndex",chunkIndex)
 
@@ -17,13 +18,16 @@ async function chunkDataStore(chunkData,chunkIndex) {
     if (!resData) return
 
     console.log('response',resData)
+    return resData.data.save
 }
 
-async function dealWithUpload() {
+async function dealWithUpload(zipFileName) {
 
+    const reqData = {zipFileName}
     const response = await axios({
         method: "post",
         url: '/deal-with-upload',
+        data:reqData,
         headers: { 'Content-Type': 'application/json' }
     })
 
