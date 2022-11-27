@@ -40,7 +40,7 @@ const app = Vue.createApp({
 
         },
         checkUpload: async function () {
-
+            console.log(this.files)
         },
     },
 })

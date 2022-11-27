@@ -1,10 +1,12 @@
 """
 upload
 """
+
 import os
 from zipfile import ZipFile
 import zipfile
-import services.base
+import services.base # pylint: disable=import-error
+
 
 chunk_save_folder_name = 'chunk_temp'
 temp_zip_file_name = 'collation.zip'

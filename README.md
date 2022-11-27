@@ -1,6 +1,6 @@
 # upload zip file
 
-Base projcet environment
+Projcet basic environment
 
     Backend sever :  Flask
     Frontend framework : Vue 3 with Options API

@@ -7,7 +7,7 @@ from flask_cors import CORS
 from services.base import response, CustomFlask, variable_init
 import services.base
 from services.upload import process_upload, save_chunk_data
-
+from uuid import uuid4
 
 app = CustomFlask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -30,6 +30,9 @@ def store_chunk_data():
     chunk_data = request.files['chunkData']
     chunk_index = request.form.get('chunkIndex')
 
+    if services.base.UPLOAD_UUID == '':
+        services.base.UPLOAD_UUID = str(uuid4())
+    print('uuid',services.base.UPLOAD_UUID)
     services.base.PROCESSING = False
 
     result = save_chunk_data(storage_folder, chunk_index, chunk_data)

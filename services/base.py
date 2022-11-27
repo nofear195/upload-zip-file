@@ -1,6 +1,7 @@
 """
 basic setting
 """
+
 from flask import Flask
 
 def response(code, message, data=None):
@@ -20,9 +21,10 @@ class CustomFlask(Flask):
     ))
 
 PROCESSING = False
+UPLOAD_UUID = ''
 
 def variable_init():
     """ init variable"""
-    global PROCESSING
+    global PROCESSING,UPLOAD_UUID # pylint: disable=global-statement
     PROCESSING = False
-    
+    UPLOAD_UUID = ''
