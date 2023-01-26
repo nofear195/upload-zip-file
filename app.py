@@ -2,6 +2,7 @@
 Main flask server
 """
 
+import os
 from flask import render_template, request
 from flask_cors import CORS
 # from waitress import serve
@@ -36,6 +37,11 @@ def store_chunk_data():
 
     services.base.PROCESSING = False
 
+    try:
+        os.makedirs(UPLOAD_STORAGE)
+    except FileExistsError:
+        pass
+
     result = save_chunk_data(
         UPLOAD_STORAGE, zip_file_name, chunk_index, chunk_data)
     if result[0] is False:
@@ -59,13 +65,13 @@ def deal_with_upload():
     return response(0, 'success', {'processing': True})
 
 
-def main():
-    """ run flask server"""
-    # for develop mode
-    app.run(host='0.0.0.0', port=8080, debug=True)
-    # for production mode
-    # serve(app,host="0.0.0.0",port=8080)
+# def main():
+#     """ run flask server"""
+#     # for develop mode
+#     app.run(host='0.0.0.0', port=80, debug=True)
+#     # for production mode
+#     # serve(app,host="0.0.0.0",port=8080)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

@@ -2,6 +2,8 @@ const app = Vue.createApp({
     data() {
         return {
             files: [],
+            currentStatus: false,
+            currentMessage: '',
         }
     },
     methods: {
@@ -31,17 +33,21 @@ const app = Vue.createApp({
 
             const zipFileName = this.files.name
             for (let i = 0; i < chunks.length; i++) {
-                const result = await chunkDataStore(zipFileName,chunks[i], i)
-                if(!result) return
+                const { save, message } = await chunkDataStore(zipFileName, chunks[i], i)
+                this.currentStatus = save
+                this.currentMessage = message
+                if (!save) return
             }
             const interval = setInterval(async () => {
-                const result = await dealWithUpload(zipFileName)
-                if (result) clearInterval(interval)
+                const { processing, message } = await dealWithUpload(zipFileName)
+                this.currentStatus = processing
+                this.currentMessage = message
+                if (processing) clearInterval(interval)
             }, 5000)
 
         },
         checkUpload: async function () {
-            console.log(this.files,this.files.name)
+            console.log(this.files, this.files.name)
         },
     },
 })
