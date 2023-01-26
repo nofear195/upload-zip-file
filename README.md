@@ -1,18 +1,14 @@
 # upload zip file
 
-Projcet basic environment
+Projcet basic environment and Packages
 
+    Python : 3-alpine3.17
     Backend sever :  Flask
     Frontend framework : Vue 3 with Options API
     UI toolkit : Bootstrap 5
     http requests: Axios
 
 ## Getting Started
-
-### Local environment 
-
-    python : 3.9.2
-    node : v16.18.0
 
 ### Flask server settings (with virtual environment)
 
@@ -43,6 +39,14 @@ add below code on vscode setting.json which can also define in **devcontainer.js
 Download the python package using the **requirements.txt** file
 
     pip install -r requirements.txt
+
+## Run server
+
+    flask run
+
+## Run server via docker   
+
+    docker container run --publish 8000:5000 nofear195/upload-zip-file-web:latest
 
 ### reference link & TBD
 
