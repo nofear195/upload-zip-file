@@ -33,36 +33,8 @@
 </head>
 
 <body>
-    <div class="base-container">
-        <nav class="navbar navbar-dark bg-info ">
-            <div class="container-fluid justify-content-start">
-                <a class="navbar-brand" href="#">
-                    <i class="bi bi-terminal-fill"></i>
-                    <i class="bi bi-terminal-fill" style="font-size: 1.5rem;"></i>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#aside"
-                    aria-expanded="false">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-        </nav>
-        <aside class="collapse show  collapse-horizontal bg-warning" id="aside">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Features</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Pricing</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link disabled">Disabled</a>
-                </li>
-              </ul>
-        </aside>
-        <main>
+    <div class="container-fluid h-100 d-flex justify-content-center align-items-center" style="background: antiquewhite;">
+        <main class="card" style="width: 80%;padding: 1%;">
             {% block content %}{% endblock %}
         </main>
     </div>
