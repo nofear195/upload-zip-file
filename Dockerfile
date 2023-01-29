@@ -1,8 +1,8 @@
-FROM python:3-alpine3.17
+FROM python:3.11.1-alpine3.16
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 EXPOSE 5000
-CMD ["flask", "run"]
+CMD ["flask","run"]
 WORKDIR /app
 RUN apk add --no-cache gcc musl-dev linux-headers
 COPY . .
