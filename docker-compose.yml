@@ -2,11 +2,11 @@ services:
   web:
     container_name: 'upload-zip-file-web'
     image: nofear195/upload-zip-file-web
-    build: .
+    build: ./web
     ports:
       - 8000:5000
     volumes:
-      - ./:/app
+      - ./web/:/app
     environment:
       MYSQL_HOST: mysql
       MYSQL_USER: root
@@ -17,9 +17,10 @@ services:
     #   - db
     links:
       - db
-  db: 
-    image: mysql:latest
+  db:
     container_name: 'upload-zip-file-db'
+    image: nofear195/upload-zip-file-db
+    build: ./db
     ports:
       - 8001:3306
     volumes:
@@ -27,7 +28,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: uploadDB
-
 
 volumes:
   upload-data:
