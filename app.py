@@ -89,10 +89,11 @@ def db():
     try:
         # 連接 MySQL/MariaDB 資料庫
         connection = mysql.connector.connect(
-            host='loacalhost:4ed9adf44fcc',  # 主機名稱
+            host='http://mysql',  # 主機名稱
+            port=8001,
             database='uploadDB',  # 資料庫名稱
             user='root',        # 帳號
-            password='password')  # 密碼
+            password='root')  # 密碼
 
         if connection.is_connected():
 
