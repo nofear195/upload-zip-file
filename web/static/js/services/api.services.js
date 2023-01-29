@@ -55,3 +55,37 @@ async function getUploadImages(zipFileName) {
 
     return resData.data.image_content
 }
+
+async function savToDatabase(zipFileName) {
+
+    const reqData = { zipFileName }
+    const response = await axios({
+        method: "post",
+        url: '/save-to-database',
+        data: reqData,
+        headers: { 'Content-Type': 'application/json' }
+    })
+
+    if (response.status !== 200) return { save: false, message: 'connect fail' }
+
+    const resData = response.data
+    if (!resData) return { save: resData.data.save, message: resData.message }
+
+    return {save: resData.data.save, message: resData.message }
+}
+
+async function dbInfo() {
+
+    const response = await axios({
+        method: "get",
+        url: '/get-db-info',
+        headers: { 'Content-Type': 'application/json' }
+    })
+
+    if (response.status !== 200) return { save: [], message: 'connect fail' }
+
+    const resData = response.data
+    if (!resData) return { dbData: [], message: resData.message }
+
+    return {dbData: resData.data.db_data, message: resData.message }
+}

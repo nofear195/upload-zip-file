@@ -22,12 +22,13 @@ services:
     image: nofear195/upload-zip-file-db
     build: ./db
     ports:
-      - 8001:3306
+      - 3306:3306
     volumes:
       - upload-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: uploadDB
+      TZ: Asia/Taipei
 
 volumes:
   upload-data:

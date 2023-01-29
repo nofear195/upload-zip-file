@@ -30,10 +30,26 @@
         </div>
     </div>
     <div class="row ">
-        <div class="col d-flex my-2 mx-2" style="height: 60vh;flex-wrap: wrap;justify-content: space-around;overflow-y: scroll;">
-            <div v-for="image in uploadImages" style="height: 30%;width: 30%;" class="my-2 mx-2">
+        <div class="col d-flex my-2 mx-2"
+            style="height: 60vh;flex-wrap: wrap;justify-content: space-around;overflow-y: scroll;">
+            <div 
+                v-for="image in uploadImages" 
+                style="height: 45%;width: 20%;display: flex;flex-direction: column;align-items: center;"
+                class="my-2 mx-2"
+            >
                 <div>{{image.name}}</div>
                 <img :src="`${image.url}`" style="height:100%">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" style="height: 10vh;overflow-y:scroll;">
+            <div v-for="content in databaseContent" :key="content.upload_id"
+                style="display:flex;justify-content: space-around" class="border border-2">
+                <div>upload_id : {{content.upload_id}}</div>
+                <div>image_name : {{content.image_name}}</div>
+                <div>created_at : {{content.created_at}}</div>
+                <div>updated_at : {{content.updated_at}}</div>
             </div>
         </div>
     </div>
