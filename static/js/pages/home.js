@@ -6,6 +6,7 @@ const app = Vue.createApp({
             currentStatus: false,
             currentMessage: '',
             uploadImages: [],
+            databaseContent: [],
         }
     },
     methods: {
@@ -31,6 +32,7 @@ const app = Vue.createApp({
 
             this.progress = 0
             this.uploadImages = []
+            this.databaseContent = []
             if (this.files.length === 0) return
             const chunkSize = 1024 * 10
             const chunks = await this.sliceFile(this.files, chunkSize)
@@ -49,13 +51,26 @@ const app = Vue.createApp({
                 this.currentMessage = message
                 if (processing) {
                     clearInterval(interval)
-                    const getUploadImage = await getUploadImages(zipFileName)
-                    if (getUploadImage.length === 0) return
-                    this.uploadImages = getUploadImage
+                    await this.getUploadData(zipFileName)
+                    // await this.saveToDB(zipFileName)
+                    // await this.getDbData()
                 }
             }, 5000)
-
-
+        },
+        getUploadData: async function (zipFileName) {
+            const getUploadImage = await getUploadImages(zipFileName)
+            if (getUploadImage.length === 0) return
+            this.uploadImages = getUploadImage
+        },
+        saveToDB: async function (zipFileName) {
+            const { save, message } = await savToDatabase(zipFileName)
+            this.currentStatus = save
+            this.currentMessage = message
+        },
+        getDbData: async function () {
+            const { dbData, message } = await dbInfo()
+            this.currentMessage = message
+            this.databaseContent = dbData
         },
     },
 })
