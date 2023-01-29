@@ -3,20 +3,40 @@
 
 <link type="text/css" href="static/styles/home.css" rel="stylesheet" />
 
-<div id="app" class="container mx-3 my-3 " style="height: 95%;background: antiquewhite;box-sizing: border-box;">
-    <input type="file" @change="getFile($event)" class="d-block my-3"
-    />
-    <hr/>
-    <button type="button" class="btn btn-warning mx-3" @click="uploadFile">
-        upload zip file
-    </button>
-    <div class="d-flex mt-2 mx-3">
-        <div>upload status : </div>
-        <div v-if="currentStatus">{{currentMessage}}</div>
+<div id="app">
+    <div class="row">
+        <div class="col">
+            <div class="input-group">
+                <input type="file" accept=".zip" class="form-control" @change="getFile($event)">
+                <button class="btn btn-outline-secondary" type="button" @click="uploadFile">Upload</button>
+            </div>
+        </div>
     </div>
-    <button type="button" class="btn btn-success mx-3" @click="checkUpload">
-        check upload processing
-    </button>
+    <div class="row my-2">
+        <div class="col-4">
+            <div>upload status : </div>
+        </div>
+        <div class="col">
+            <div v-if="currentStatus">{{currentMessage}}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar"
+                    :style="`width: ${progress}%`" :aria-valuenow="`width: ${progress}%`" aria-valuemin="0"
+                    aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col d-flex my-2 mx-2" style="height: 60vh;flex-wrap: wrap;justify-content: space-around;overflow-y: scroll;">
+            <div v-for="image in uploadImages" style="height: 30%;width: 30%;" class="my-2 mx-2">
+                <div>{{image.name}}</div>
+                <img :src="`${image.url}`" style="height:100%">
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="static/js/services/api.services.js" type="text/javascript"></script>

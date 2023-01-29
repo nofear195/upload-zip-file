@@ -5,7 +5,7 @@ upload function
 import os
 from zipfile import ZipFile
 import zipfile
-from shutil import rmtree
+from shutil import rmtree, move
 from uuid import uuid4, UUID
 import services.base  # pylint: disable=import-error
 
@@ -78,7 +78,7 @@ def save_chunk_data(storage_folder_path, zip_file_name, chunk_index, chunk_data)
     except OSError as error:
         print('os error', error)
         return [False, error]
-    return [True, 'save chunk success']
+    return [True, f'uploading chunk no.{chunk_index} success']
 
 
 def rebuild_file(chunks_src_path, storage_folder_path, target_file_name):
@@ -105,7 +105,7 @@ def rebuild_file(chunks_src_path, storage_folder_path, target_file_name):
     return [True, 'rebuild file success']
 
 
-def unzip_file(src_file_path, storage_folder_path):
+def unzip_file(src_file_path, storage_folder_path, zip_file_name):
     """ unzip_file"""
 
     temp_save_folder = f'{storage_folder_path}/unzip_{services.base.UPLOAD_UUID}'
@@ -117,20 +117,21 @@ def unzip_file(src_file_path, storage_folder_path):
     with ZipFile(src_file_path, 'r') as z_f:
         try:
             for item in z_f.namelist():
-                z_f.extract(item, path=storage_folder_path)
+                z_f.extract(item, path=temp_save_folder)
         except zipfile.BadZipfile as error:
             print('error', error)
             return [False, error]
 
-    # transfer_encode_error(temp_save_folder)
-    # unzip_folder_name = next(os.walk(temp_save_folder))[1][0]
-    
-    # os.remove(f'{temp_save_folder}/{unzip_folder_name}')
+    subfolders = [f.path for f in os.scandir(temp_save_folder) if f.is_dir()]
 
-    # for file in os.listdir(temp_save_folder):
-    #     os.remove(f'{temp_save_folder}/{file}')
-
-    # os.remove(temp_save_folder)
+    for sub in subfolders:
+        for f in os.listdir(sub):
+            src = os.path.join(sub, f)
+            dst = os.path.join(temp_save_folder, f)
+            move(src, dst)
+    for sub in subfolders:
+        rmtree(sub)
+    os.rename(temp_save_folder, f'{storage_folder_path}/{zip_file_name}')
 
     return [True, 'unzip success']
 
@@ -143,17 +144,23 @@ def process_upload(storage_folder_path, zip_file_name):
     result = rebuild_file(rebuild_src_file_path,
                           storage_folder_path, zip_file_name)
     print('result', result[1])
+    if (result[0] is False):
+        return [result[0], result[1]]
+    # delete tmp_folder
+    rmtree(rebuild_src_file_path)
 
     # unzip file
     unzip_file_path = f'{storage_folder_path}/{zip_file_name}.zip'
-    result = unzip_file(unzip_file_path, storage_folder_path)
-    print('result', result[1])
 
-    # delete tmp_folder
-    rmtree(rebuild_src_file_path)
-    # delete zip file
+    result = unzip_file(unzip_file_path, storage_folder_path, zip_file_name)
+    print('result', result[1])
+    if (result[0] is False):
+        return [result[0], result[1]]
+
+    #delete zip file
     os.remove(unzip_file_path)
 
     # reset variable to init
     services.base.UPLOAD_UUID = ''
     services.base.PROCESSING = True
+    return [True, 'process success']

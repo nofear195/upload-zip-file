@@ -2,8 +2,10 @@ const app = Vue.createApp({
     data() {
         return {
             files: [],
+            progress: 0,
             currentStatus: false,
             currentMessage: '',
+            uploadImages: [],
         }
     },
     methods: {
@@ -27,8 +29,10 @@ const app = Vue.createApp({
         },
         uploadFile: async function () {
 
+            this.progress = 0
+            this.uploadImages = []
             if (this.files.length === 0) return
-            const chunkSize = 1024 * 10 * 10
+            const chunkSize = 1024 * 10
             const chunks = await this.sliceFile(this.files, chunkSize)
 
             const zipFileName = this.files.name
@@ -37,17 +41,21 @@ const app = Vue.createApp({
                 this.currentStatus = save
                 this.currentMessage = message
                 if (!save) return
+                this.progress = ((i + 1) / chunks.length) * 100
             }
             const interval = setInterval(async () => {
                 const { processing, message } = await dealWithUpload(zipFileName)
                 this.currentStatus = processing
                 this.currentMessage = message
-                if (processing) clearInterval(interval)
+                if (processing) {
+                    clearInterval(interval)
+                    const getUploadImage = await getUploadImages(zipFileName)
+                    if (getUploadImage.length === 0) return
+                    this.uploadImages = getUploadImage
+                }
             }, 5000)
 
-        },
-        checkUpload: async function () {
-            console.log(this.files, this.files.name)
+
         },
     },
 })

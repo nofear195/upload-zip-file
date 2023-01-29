@@ -37,3 +37,21 @@ async function dealWithUpload(zipFileName) {
 
     return { processing: resData.data.processing, message: resData.message }
 }
+
+async function getUploadImages(zipFileName) {
+
+    const reqData = { zipFileName }
+    const response = await axios({
+        method: "post",
+        url: '/upload-images',
+        data: reqData,
+        headers: { 'Content-Type': 'application/json' }
+    })
+
+    if (response.status !== 200) return []
+
+    const resData = response.data
+    if (!resData) return []
+
+    return resData.data.image_content
+}

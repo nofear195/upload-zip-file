@@ -3,7 +3,7 @@ Main flask server
 """
 
 import os
-from flask import render_template, request
+from flask import render_template, request, send_from_directory,url_for
 from flask_cors import CORS
 # from waitress import serve
 from services.base import response, CustomFlask, variable_init
@@ -16,10 +16,12 @@ from mysql.connector import Error
 app = CustomFlask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config["upload"] = './static/upload'
+
 CORS(app)
 
 variable_init()
-UPLOAD_STORAGE = './upload'
+UPLOAD_STORAGE = './static/upload'
 
 
 @app.route('/')
@@ -61,10 +63,26 @@ def deal_with_upload():
     zip_file_name = zip_file_name.replace('.zip', '')
 
     if services.base.PROCESSING is False:
-        process_upload(UPLOAD_STORAGE, zip_file_name)
-        return response(0, 'success', {'processing': False})
+        result = process_upload(UPLOAD_STORAGE, zip_file_name)
+        if result[0] is False:
+            return response(0, result[1], {'processing': False})
 
-    return response(0, 'success', {'processing': True})
+    return response(0, 'process upload file success', {'processing': True})
+
+
+@app.route('/upload-images',methods=['POST'])
+def upload_images():
+    """ deal with upload"""
+    data = request.get_json()
+    folder_name = data['zipFileName'].replace('.zip', '')
+    folder_path = f'{app.config["upload"]}/{folder_name}'
+    images = os.listdir(folder_path)
+    images_content = []
+    for image in images:
+        tmp = {'name':image,'url':f'{folder_path}/{image}'}
+        images_content.append(tmp)
+    return response(0, 'success', {'image_content': images_content})
+
 
 @app.route('/db', methods=['GET'])
 def db():
@@ -112,5 +130,5 @@ def db():
 #     # serve(app,host="0.0.0.0",port=8080)
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
