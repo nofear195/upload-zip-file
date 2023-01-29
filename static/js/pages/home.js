@@ -52,8 +52,8 @@ const app = Vue.createApp({
                 if (processing) {
                     clearInterval(interval)
                     await this.getUploadData(zipFileName)
-                    await this.saveToDB(zipFileName)
-                    await this.getDbData()
+                    // await this.saveToDB(zipFileName)
+                    // await this.getDbData()
                 }
             }, 5000)
         },
